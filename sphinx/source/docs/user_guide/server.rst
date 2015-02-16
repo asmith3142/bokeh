@@ -101,7 +101,27 @@ Streaming Data
 
 Large Data
 ----------
+This feature is currenlty in beta.  Bokeh supports large datasets via the blaze, combined with a few abstract rendering and smart downsampling routines.  Bokeh currently pulls in the blaze server as a flask blueprint - so if you have the necessary libraries installed, your bokeh server is also a blaze server.
 
+Blaze Server
+------------
+
+To use the smart downsampling facilities of bokeh, you must install the multi-user blaze server, https://github.com/ContinuumIO/multiuserblazeserver.
+
+    $ conda install -c bokeh multiuserblazeserver
+
+or
+
+    $ pip install -c bokeh multiuserblazeserver
+
+
+The blaze server is a bit mis-named at the moment, it supports a pluggable authentication model however currently only the single user authentication backend is implemented.  There are 2 categories of data defined in the blaze server - data owned by the server itself, and data owned by individual users.  Data owned by the server is read only.  Data owned by individual users can be modified by the user that owns it, but is readable by everyone.
+
+To configure server owned data, you pass it a configuration file (a python file) which defines a data parameter - this should be a dictionary of anything blaze can understand(pandas dataframes, hdf5 files, numpy arrays, etc..).  User defined data is configured by users in a 2 stage process.  First, uploading files into the servers data directory, and then configuring that resources
+
+    from mbs.client import upload, configure
+    upload('http://localhost:5006/', 'mydata.hdf5')
+    configure('hdfstore://defaultuser/mydata.hdf5
 
 
 .. _userguide_server_widgets:
